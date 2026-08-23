@@ -1,0 +1,17 @@
+[Unit]
+Description=Monitor Background Service
+After=network.target
+# Limit restarts: max 3 times within 30 seconds
+StartLimitIntervalSec=30
+StartLimitBurst=3
+
+[Service]
+Type=simple
+ExecStart=/opt/monitor
+# Restart when the service crashes (not on normal stop)
+Restart=on-failure
+# Wait 5 seconds before restarting
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

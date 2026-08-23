@@ -1,0 +1,57 @@
+=== 1. Full service log ===
+Aug 23 19:30:00 ubuntu systemd[1]: Started Logger Crash Analysis Service.
+Aug 23 19:30:00 ubuntu logger[4512]: Service running normally, cycle 1
+Aug 23 19:30:00 ubuntu logger[4512]: Memory usage high: 81%
+Aug 23 19:30:00 ubuntu logger[4512]: Failed to connect to database, retry 1
+Aug 23 19:30:02 ubuntu logger[4512]: Service running normally, cycle 2
+Aug 23 19:30:02 ubuntu logger[4512]: Memory usage high: 82%
+Aug 23 19:30:02 ubuntu logger[4512]: Failed to connect to database, retry 2
+Aug 23 19:30:04 ubuntu logger[4512]: Service running normally, cycle 3
+Aug 23 19:30:04 ubuntu logger[4512]: Memory usage high: 83%
+Aug 23 19:30:04 ubuntu logger[4512]: Failed to connect to database, retry 3
+... (skipping some cycles for brevity) ...
+Aug 23 19:30:28 ubuntu logger[4512]: Service running normally, cycle 15
+Aug 23 19:30:28 ubuntu logger[4512]: Memory usage high: 80%
+Aug 23 19:30:28 ubuntu logger[4512]: Failed to connect to database, retry 15
+Aug 23 19:30:30 ubuntu logger[4512]: Fatal error encountered. Aborting...
+Aug 23 19:30:30 ubuntu systemd[1]: logger.service: Main process exited, code=killed, status=6/ABRT
+Aug 23 19:30:30 ubuntu systemd[1]: logger.service: Failed with result 'core-dump'.
+
+=== 2. Warning level and above ===
+Aug 23 19:30:00 ubuntu logger[4512]: Memory usage high: 81%
+Aug 23 19:30:00 ubuntu logger[4512]: Failed to connect to database, retry 1
+Aug 23 19:30:02 ubuntu logger[4512]: Memory usage high: 82%
+Aug 23 19:30:02 ubuntu logger[4512]: Failed to connect to database, retry 2
+Aug 23 19:30:04 ubuntu logger[4512]: Memory usage high: 83%
+Aug 23 19:30:04 ubuntu logger[4512]: Failed to connect to database, retry 3
+... (skipping some cycles for brevity) ...
+Aug 23 19:30:28 ubuntu logger[4512]: Memory usage high: 80%
+Aug 23 19:30:28 ubuntu logger[4512]: Failed to connect to database, retry 15
+Aug 23 19:30:30 ubuntu logger[4512]: Fatal error encountered. Aborting...
+Aug 23 19:30:30 ubuntu systemd[1]: logger.service: Main process exited, code=killed, status=6/ABRT
+Aug 23 19:30:30 ubuntu systemd[1]: logger.service: Failed with result 'core-dump'.
+
+=== 3. Error level and above ===
+Aug 23 19:30:00 ubuntu logger[4512]: Failed to connect to database, retry 1
+Aug 23 19:30:02 ubuntu logger[4512]: Failed to connect to database, retry 2
+Aug 23 19:30:04 ubuntu logger[4512]: Failed to connect to database, retry 3
+... (skipping some cycles for brevity) ...
+Aug 23 19:30:28 ubuntu logger[4512]: Failed to connect to database, retry 15
+Aug 23 19:30:30 ubuntu logger[4512]: Fatal error encountered. Aborting...
+
+=== 4. Log from the last 1 minute ===
+Aug 23 19:30:00 ubuntu systemd[1]: Started Logger Crash Analysis Service.
+Aug 23 19:30:00 ubuntu logger[4512]: Service running normally, cycle 1
+Aug 23 19:30:00 ubuntu logger[4512]: Memory usage high: 81%
+Aug 23 19:30:00 ubuntu logger[4512]: Failed to connect to database, retry 1
+... (includes all logs from cycle 1 to 15 within the 30 seconds window) ...
+Aug 23 19:30:30 ubuntu logger[4512]: Fatal error encountered. Aborting...
+Aug 23 19:30:30 ubuntu systemd[1]: logger.service: Main process exited, code=killed, status=6/ABRT
+Aug 23 19:30:30 ubuntu systemd[1]: logger.service: Failed with result 'core-dump'.
+
+=== 5. Crash point ===
+Aug 23 19:30:00 ubuntu logger[4512]: Failed to connect to database, retry 1
+Aug 23 19:30:02 ubuntu logger[4512]: Failed to connect to database, retry 2
+... (skipping some cycles for brevity) ...
+Aug 23 19:30:28 ubuntu logger[4512]: Failed to connect to database, retry 15
+Aug 23 19:30:30 ubuntu logger[4512]: Fatal error encountered. Aborting...
