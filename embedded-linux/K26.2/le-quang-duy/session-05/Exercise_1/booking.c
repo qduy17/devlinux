@@ -4,6 +4,8 @@
 #include <unistd.h>
 #include <string.h>
 
+#define CUSTOMER_NAME_LEN 50
+
 /*
  * THEORY QUESTION: 
  * Why must the check and the deduct be inside the SAME lock/unlock block?
@@ -20,7 +22,7 @@
 
 typedef struct {
     int  agent_id;
-    char customer[50];
+    char customer[CUSTOMER_NAME_LEN];
     int  seats_wanted;
 } BookingRequest;
 

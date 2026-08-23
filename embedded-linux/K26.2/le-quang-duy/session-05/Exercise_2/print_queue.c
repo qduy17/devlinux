@@ -4,6 +4,8 @@
 #include <unistd.h>
 #include <string.h>
 
+#define QUEUE_SIZE 5
+
 /*
  * THEORY QUESTION:
  * 1. Why must pthread_cond_wait() be inside a while loop rather than an if?
@@ -28,7 +30,7 @@ typedef struct {
     int  pages;
 } Document;
 
-Document queue[5];
+Document queue[QUEUE_SIZE];
 int head = 0, tail = 0, count = 0;
 int all_sent = 0;
 
@@ -48,14 +50,14 @@ typedef struct {
 
 void enqueue(Document doc) {
     queue[tail] = doc;
-    tail = (tail + 1) % 5;
+    tail = (tail + 1) % QUEUE_SIZE;
     count++;
     total_submitted++;
 }
 
 Document dequeue() {
     Document doc = queue[head];
-    head = (head + 1) % 5;
+    head = (head + 1) % QUEUE_SIZE;
     count--;
     total_printed++;
     total_pages += doc.pages;
@@ -68,14 +70,14 @@ void* producer(void* arg) {
     for (int i = 0; i < 3; i++) {
         pthread_mutex_lock(&q_lock);
         
-        while (count == 5) {
+        while (count == QUEUE_SIZE) {
             printf("[Producer %d] Queue full — waiting...\n", p_args->producer_id);
             pthread_cond_wait(&not_full, &q_lock);
         }
         
         enqueue(p_args->docs[i]);
-        printf("[Producer %d] Submitting: %-15s (%2d pages) — queue: %d/5\n", 
-               p_args->producer_id, p_args->docs[i].filename, p_args->docs[i].pages, count);
+        printf("[Producer %d] Submitting: %-19s (%2d pages) — queue: %d/%d\n", 
+               p_args->producer_id, p_args->docs[i].filename, p_args->docs[i].pages, count, QUEUE_SIZE);
                
         pthread_cond_signal(&not_empty);
         pthread_mutex_unlock(&q_lock);
@@ -100,8 +102,8 @@ void* printer(void* arg) {
         }
         
         Document doc = dequeue();
-        printf("[Printer]    Printing:   %-15s (%2d pages) — queue: %d/5\n", 
-               doc.filename, doc.pages, count);
+        printf("[Printer]    Printing:   %-19s (%2d pages) — queue: %d/%d\n", 
+               doc.filename, doc.pages, count, QUEUE_SIZE);
                
         pthread_cond_signal(&not_full);
         pthread_mutex_unlock(&q_lock);
@@ -118,7 +120,7 @@ int main() {
     
     printf("==============================================\n");
     printf("   OFFICE PRINT QUEUE (3 producers, 1 printer)\n");
-    printf("   Queue capacity: 5 documents                \n");
+    printf("   Queue capacity: %d documents                \n", QUEUE_SIZE);
     printf("==============================================\n\n");
     
     pthread_mutex_init(&q_lock, NULL);
@@ -128,7 +130,7 @@ int main() {
     ProducerArgs p_args[3] = {
         {1, {{1, "report_Q1.pdf", 12}, {4, "slides.pdf", 20}, {7, "summary.pdf", 4}}},
         {2, {{2, "contract.pdf", 5},   {5, "memo.pdf", 2},    {8, "budget.pdf", 7}}},
-        {3, {{3, "invoice.pdf", 3},    {6, "proposal.pdf", 8}, {9, "agenda.pdf", 5}}}
+        {3, {{3, "invoice.pdf", 3},    {6, "proposal.pdf", 8}, {9, "report_2nd_copy.pdf", 5}}}
     };
     
     // Start printer

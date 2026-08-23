@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -pthread
+CFLAGS = -Wall -Wextra -std=gnu99 -pthread -g
 
 all: print_queue
 
